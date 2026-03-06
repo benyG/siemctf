@@ -1,0 +1,19 @@
+services:
+  ctf-siem:
+    build: .
+    container_name: ctf-siem
+    ports:
+      - "8000:8000"
+    environment:
+      APP_TITLE: "CTF SIEM"
+      DATABASE_URL: "sqlite:////data/ctf_siem.db"
+      DATA_DIR: "/data"
+      AUTO_IMPORT_SCENARIOS: "true"
+      SCENARIO_ROOT: "/app/sample_scenarios"
+      DEFAULT_SCENARIO_ID: "phishing_chain"
+      RESET_DB_ON_BOOT: "false"
+    volumes:
+      - ctf_siem_data:/data
+
+volumes:
+  ctf_siem_data:

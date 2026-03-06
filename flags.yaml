@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="banner">Scenario actif: <strong>{{ scenario.name }}</strong></div>
+<div class="panel">
+  <h1>Assets</h1>
+  <table>
+    <thead><tr><th>Hostname</th><th>IP</th><th>OS</th><th>Owner</th><th>Criticality</th><th>Department</th></tr></thead>
+    <tbody>
+    {% for a in assets %}
+      <tr>
+        <td><a href="/events?q=hostname:{{ a.hostname }}">{{ a.hostname }}</a></td>
+        <td class="mono">{{ a.ip }}</td>
+        <td>{{ a.os }}</td>
+        <td>{{ a.owner }}</td>
+        <td>{{ a.criticality }}</td>
+        <td>{{ a.department }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

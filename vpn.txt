@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+  <h1>{{ message }}</h1>
+  <p class="muted">Importe un scénario via l'API admin, puis active-le.</p>
+</div>
+{% endblock %}
