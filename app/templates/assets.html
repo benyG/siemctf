@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero hero-assets">
+  <div>
+    <h1>Asset Inventory</h1>
+    <p>Scenario actif: <strong>{{ scenario.name }}</strong></p>
+  </div>
+  <div class="pill">{{ assets|length }} visible assets</div>
+</div>
+<section class="panel panel-assets">
+  <div class="panel-header"><h2>Tracked hosts</h2><span class="muted">Search hostname, IP, OS, owner, department</span></div>
+  <div class="table-shell">
+    <table>
+      <thead><tr><th>Hostname</th><th>IP</th><th>OS</th><th>Owner</th><th>Criticality</th><th>Department</th></tr></thead>
+      <tbody>
+      {% for a in assets %}
+        <tr>
+          <td><a href="/events?q=hostname:{{ a.hostname }}">{{ a.hostname }}</a></td>
+          <td class="mono">{{ a.ip or '' }}</td>
+          <td>{{ a.os or '' }}</td>
+          <td>{{ a.owner or '' }}</td>
+          <td>{{ a.criticality or '' }}</td>
+          <td>{{ a.department or '' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+

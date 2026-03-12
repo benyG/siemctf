@@ -1,0 +1,4 @@
+timestamp=2026-03-01T09:11:02Z source=sysmon host=HR-LT-17 user=jdupont process_name=WINWORD.EXE command_line="WINWORD.EXE invoice.docm" message="Office document launched from email"
+timestamp=2026-03-01T09:12:04Z source=sysmon host=HR-LT-17 user=jdupont process_name=powershell.exe command_line="powershell -enc SQBmACgAZQAgAGIAYQBkACkA" message="Encoded PowerShell launched"
+{"timestamp":"2026-03-01T09:12:16Z","source":"sysmon","hostname":"HR-LT-17","username":"jdupont","event_type":"process_start","process_name":"cmd.exe","command_line":"cmd /c whoami","message":"Command shell launched"}
+2026-03-01 09:12:22 sysmon fallback host=HR-LT-17 user=jdupont 10.0.0.5 45.77.12.99 suspicious powershell beacon observed

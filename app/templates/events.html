@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero hero-events">
+  <div>
+    <h1>Event Explorer</h1>
+    <p>Scenario actif: <strong>{{ scenario.name }}</strong> — pivot on sources, hosts and users.</p>
+  </div>
+  <div class="pill">{{ events|length }} events displayed</div>
+</div>
+<section class="panel panel-events">
+  <div class="panel-header"><h2>Results</h2><span class="muted">Mode: {{ query_meta.mode if query_meta else 'pseudo-kql-spl' }}</span></div>
+  <div class="kql-hint mono">field:value • field~contains • wildcard * • AND / OR / NOT • quoted free text</div>
+  <div class="table-shell" style="margin-top:14px;">
+    <table>
+      <thead><tr><th>ID</th><th>Timestamp</th><th>Source</th><th>Type</th><th>Host</th><th>User</th><th>IPs</th><th>Process</th><th>Parse</th><th>IOC</th><th>Message</th></tr></thead>
+      <tbody>
+      {% for e in events %}
+        <tr>
+          <td>{{ e.id }}</td>
+          <td class="mono">{{ e.timestamp }}</td>
+          <td><a href="/events?q=source:{{ e.source }}">{{ e.source }}</a></td>
+          <td>{{ e.event_type }}</td>
+          <td>{% if e.hostname %}<a href="/events?q=hostname:{{ e.hostname }}">{{ e.hostname }}</a>{% endif %}</td>
+          <td>{% if e.username %}<a href="/events?q=username:{{ e.username }}">{{ e.username }}</a>{% endif %}</td>
+          <td class="mono">{{ e.src_ip or "" }}{% if e.dst_ip %} → {{ e.dst_ip }}{% endif %}</td>
+          <td class="mono">{{ e.process_name or "" }}</td>
+          <td>{{ e.parse_status }} ({{ e.parse_confidence }})</td>
+          <td class="mono">{{ e.ioc_match or "" }}</td>
+          <td>{{ e.message }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+

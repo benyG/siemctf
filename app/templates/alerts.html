@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero hero-alerts">
+  <div>
+    <h1>Detection Queue</h1>
+    <p>Scenario actif: <strong>{{ scenario.name }}</strong></p>
+  </div>
+  <div class="pill">{{ alerts|length }} alerts</div>
+</div>
+<section class="panel panel-alerts">
+  <div class="panel-header"><h2>Alerts</h2><span class="muted">Searches severity, title, status, rule id</span></div>
+  <div class="table-shell">
+    <table>
+      <thead><tr><th>ID</th><th>Rule</th><th>Title</th><th>Description</th><th>Severity</th><th>Status</th><th>Event ID</th></tr></thead>
+      <tbody>
+      {% for a in alerts %}
+        <tr class="{% if a.severity == 'critical' %}critical-row{% endif %}">
+          <td>{{ a.id }}</td>
+          <td class="mono">{{ a.rule_id }}</td>
+          <td>{{ a.title }}</td>
+          <td>{{ a.description }}</td>
+          <td><span class="sev-{{ a.severity }}">{{ a.severity }}</span></td>
+          <td>{{ a.status }}</td>
+          <td>{{ a.event_id or '' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+

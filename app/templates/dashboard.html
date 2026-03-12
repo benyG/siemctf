@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero hero-dashboard">
+  <div>
+    <h1>Security Operations Overview</h1>
+    <p>Scenario actif: <strong>{{ scenario.name }}</strong> — {{ scenario.description }}</p>
+  </div>
+  <div class="pill">Filter: <span class="mono">{{ q or 'none' }}</span></div>
+</div>
+
+<div class="cards cards-dashboard">
+  <div class="card"><h3>Events</h3><div class="big">{{ dashboard.summary.total_events }}</div><div class="metric-sub">Visible after filter</div></div>
+  <div class="card"><h3>Alerts</h3><div class="big">{{ dashboard.summary.total_alerts }}</div><div class="metric-sub">Scenario-wide detections</div></div>
+  <div class="card"><h3>Assets</h3><div class="big">{{ dashboard.summary.total_assets }}</div><div class="metric-sub">Tracked hosts</div></div>
+  <div class="card"><h3>Parse Success</h3><div class="big">{{ dashboard.summary.parse_success_rate }}%</div><div class="metric-sub">Parsed vs visible events</div></div>
+  <div class="card"><h3>Parsed</h3><div class="big">{{ dashboard.summary.parsed }}</div><div class="metric-sub">High-confidence records</div></div>
+  <div class="card"><h3>Partial</h3><div class="big">{{ dashboard.summary.partial }}</div><div class="metric-sub">Usable with gaps</div></div>
+  <div class="card"><h3>Failed</h3><div class="big">{{ dashboard.summary.failed }}</div><div class="metric-sub">Needs parser review</div></div>
+</div>
+
+<div class="grid-3">
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>Events by Source</h2><span class="muted">Distribution</span></div>
+    <div class="chart-shell compact"><canvas id="sourceChart" class="chart"></canvas></div>
+  </section>
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>Alerts by Severity</h2><span class="muted">Detection load</span></div>
+    <div class="chart-shell compact"><canvas id="severityChart" class="chart"></canvas></div>
+  </section>
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>IOC Hits</h2><span class="muted">Threat matches / cluster indicators</span></div>
+    <div class="chart-shell compact"><canvas id="iocChart" class="chart"></canvas></div>
+  </section>
+</div>
+
+<div class="grid-2" style="margin-top:16px;">
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>Top Hosts</h2><div class="panel-toolbar"><a class="query-chip" href="/events">Open events</a></div></div>
+    <div class="chart-shell"><canvas id="hostChart" class="chart"></canvas></div>
+  </section>
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>Top Users</h2><div class="panel-toolbar"><a class="query-chip" href="/alerts">Investigate alerts</a></div></div>
+    <div class="chart-shell"><canvas id="userChart" class="chart"></canvas></div>
+  </section>
+</div>
+
+<div class="grid-2" style="margin-top:16px;">
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>Activity Timeline</h2><span class="muted">Latest 48 buckets / spread cadence</span></div>
+    <div class="chart-shell"><canvas id="timelineChart" class="chart"></canvas></div>
+  </section>
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>KQL / SPL Style Query Guide</h2></div>
+    <div class="layout-stack">
+      <div class="kql-hint mono">field:value &nbsp;&nbsp; field~contains &nbsp;&nbsp; wildcard * &nbsp;&nbsp; AND / OR / NOT &nbsp;&nbsp; ( )</div>
+      <div class="section-note">Use the global filter bar above to narrow dashboard metrics, then pivot into Events or Alerts.</div>
+      <div>
+        {% for ex in search_examples %}
+          <a class="query-chip mono" href="/dashboard?q={{ ex|urlencode }}">{{ ex }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="grid-2" style="margin-top:16px;">
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>Latest Alerts</h2><span class="muted">Most recent detections</span></div>
+    <div class="table-shell">
+      <table>
+        <thead><tr><th>ID</th><th>Rule</th><th>Title</th><th>Severity</th><th>Status</th><th>Event</th></tr></thead>
+        <tbody>
+        {% for a in dashboard.latest_alerts %}
+          <tr class="{% if a.severity == 'critical' %}critical-row{% endif %}">
+            <td>{{ a.id }}</td>
+            <td class="mono">{{ a.rule_id }}</td>
+            <td>{{ a.title }}</td>
+            <td><span class="sev-{{ a.severity }}">{{ a.severity }}</span></td>
+            <td>{{ a.status }}</td>
+            <td>{{ a.event_id }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel panel-dashboard">
+    <div class="panel-header"><h2>Recent Event Stream</h2><span class="muted">Filtered feed</span></div>
+    <div class="table-shell">
+      <table>
+        <thead><tr><th>Time</th><th>Source</th><th>Host</th><th>User</th><th>Process</th><th>Message</th></tr></thead>
+        <tbody>
+        {% for e in dashboard.recent_events %}
+          <tr>
+            <td class="mono">{{ e.timestamp or '' }}</td>
+            <td><a href="/events?q=source:{{ e.source }}">{{ e.source }}</a></td>
+            <td>{% if e.hostname %}<a href="/events?q=hostname:{{ e.hostname }}">{{ e.hostname }}</a>{% endif %}</td>
+            <td>{% if e.username %}<a href="/events?q=username:{{ e.username }}">{{ e.username }}</a>{% endif %}</td>
+            <td class="mono">{{ e.process_name or '' }}</td>
+            <td>{{ e.message }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+const chartTheme = {
+  text: getComputedStyle(document.body).getPropertyValue('--text').trim(),
+  muted: getComputedStyle(document.body).getPropertyValue('--muted').trim(),
+  border: getComputedStyle(document.body).getPropertyValue('--border').trim(),
+  accent: getComputedStyle(document.body).getPropertyValue('--accent').trim(),
+  accent2: getComputedStyle(document.body).getPropertyValue('--accent-2').trim(),
+  critical: getComputedStyle(document.body).getPropertyValue('--critical').trim(),
+  high: getComputedStyle(document.body).getPropertyValue('--high').trim(),
+  medium: getComputedStyle(document.body).getPropertyValue('--medium').trim(),
+  low: getComputedStyle(document.body).getPropertyValue('--low').trim(),
+};
+function palette(n){
+  const colors=[chartTheme.accent, chartTheme.accent2, chartTheme.critical, chartTheme.high, chartTheme.medium, chartTheme.low, chartTheme.text];
+  return Array.from({length:n}, (_,i)=>colors[i % colors.length]);
+}
+function renderChart(id, type, rows, opts={}) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  new Chart(el, {
+    type,
+    data: {
+      labels: rows.map(x => x.label),
+      datasets: [{
+        data: rows.map(x => x.value),
+        backgroundColor: type === 'line' ? 'transparent' : (opts.colors || palette(rows.length)),
+        borderColor: opts.borderColor || chartTheme.accent,
+        borderWidth: 2,
+        pointRadius: type === 'line' ? 2 : 0,
+        tension: .25,
+        fill: opts.fill || false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: chartTheme.muted }, grid: { color: chartTheme.border } },
+        y: { ticks: { color: chartTheme.muted }, grid: { color: chartTheme.border }, beginAtZero: true }
+      }
+    }
+  });
+}
+renderChart("sourceChart", "bar", {{ dashboard.by_source | tojson }});
+renderChart("severityChart", "bar", {{ dashboard.by_severity | tojson }}, {colors:[chartTheme.critical, chartTheme.high, chartTheme.medium, chartTheme.low, chartTheme.accent]});
+renderChart("iocChart", "bar", {{ dashboard.top_iocs | tojson }}, {colors:[chartTheme.accent2, chartTheme.accent, chartTheme.high]});
+renderChart("hostChart", "bar", {{ dashboard.top_hosts | tojson }});
+renderChart("userChart", "bar", {{ dashboard.top_users | tojson }}, {colors:[chartTheme.accent2, chartTheme.low, chartTheme.medium]});
+renderChart("timelineChart", "line", {{ dashboard.timeline | tojson }}, {fill:true, borderColor:chartTheme.accent2});
+</script>
+{% endblock %}
+

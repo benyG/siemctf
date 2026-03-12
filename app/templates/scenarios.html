@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero hero-scenarios">
+  <div>
+    <h1>Scenario Registry</h1>
+    <p>Installed scenario packs available to the runtime.</p>
+  </div>
+  <div class="pill">{{ scenarios|length }} scenarios</div>
+</div>
+<section class="panel panel-scenarios">
+  <div class="panel-header"><h2>Scenario Packages</h2><span class="muted">Imported + ready to activate</span></div>
+  <div class="table-shell">
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Difficulty</th><th>Version</th><th>Active</th></tr></thead>
+      <tbody>
+      {% for s in scenarios %}
+        <tr>
+          <td class="mono">{{ s.id }}</td>
+          <td>{{ s.name }}</td>
+          <td>{{ s.description }}</td>
+          <td>{{ s.difficulty }}</td>
+          <td>{{ s.version }}</td>
+          <td>{% if s.is_active %}<span class="pill"><span class="dot"></span> active</span>{% else %}<span class="muted">inactive</span>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

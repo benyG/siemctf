@@ -1,0 +1,5 @@
+id: phishing_chain
+name: Phishing initial access chain
+description: Macro -> PowerShell -> outbound C2 -> suspicious VPN failures.
+difficulty: medium
+version: 3.0

@@ -1,0 +1,5 @@
+hostname,ip,os,owner,criticality,department
+HR-LT-17,10.0.0.5,Windows 11,jdupont,high,HR
+VPN-01,10.0.0.20,Appliance,netops,high,IT
+DC-01,10.0.0.10,Windows Server 2022,infra-admin,critical,IT
+WEB-01,10.0.0.30,Ubuntu 22.04,webops,medium,Engineering

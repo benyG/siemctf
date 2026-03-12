@@ -1,0 +1,6 @@
+timestamp=2026-03-01T08:59:01Z source=vpn host=VPN-01 user=jdupont src_ip=185.22.10.4 action=failed message="authentication failure"
+timestamp=2026-03-01T08:59:20Z source=vpn host=VPN-01 user=jdupont src_ip=185.22.10.4 action=failed message="authentication failure"
+timestamp=2026-03-01T08:59:41Z source=vpn host=VPN-01 user=jdupont src_ip=185.22.10.4 action=failed message="authentication failure"
+timestamp=2026-03-01T09:00:03Z source=vpn host=VPN-01 user=jdupont src_ip=185.22.10.4 action=failed message="authentication failure"
+timestamp=2026-03-01T09:00:28Z source=vpn host=VPN-01 user=jdupont src_ip=185.22.10.4 action=failed message="authentication failure"
+timestamp=2026-03-01T09:01:05Z source=vpn host=VPN-01 user=jdupont src_ip=185.22.10.4 action=success message="authentication success"

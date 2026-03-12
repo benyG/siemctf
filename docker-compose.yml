@@ -9,11 +9,16 @@ services:
       DATABASE_URL: "sqlite:////data/ctf_siem.db"
       DATA_DIR: "/data"
       AUTO_IMPORT_SCENARIOS: "true"
-      SCENARIO_ROOT: "/app/sample_scenarios"
+      AUTO_IMPORT_ALL_SCENARIOS: "true"
+      SCENARIO_ROOT: "/scenarios"
       DEFAULT_SCENARIO_ID: "phishing_chain"
       RESET_DB_ON_BOOT: "false"
+      UI_THEME: "__CTF_THEME__"
+      ENABLE_THEME_SELECTOR: "0"
+      API_KEY: "change-me"
     volumes:
       - ctf_siem_data:/data
+      - ./sample_scenarios:/scenarios:ro
 
 volumes:
   ctf_siem_data:

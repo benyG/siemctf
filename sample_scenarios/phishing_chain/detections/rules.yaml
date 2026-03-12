@@ -1,0 +1,29 @@
+rules:
+  - id: suspicious_powershell
+    title: Suspicious PowerShell Execution
+    description: Encoded PowerShell execution detected
+    severity: high
+    condition:
+      event_type: process_start
+      process_name: powershell.exe
+      command_line_contains_any:
+        - "-enc"
+        - "EncodedCommand"
+  - id: outbound_ioc
+    title: Outbound connection to known IOC
+    description: Network traffic to a known IOC
+    severity: critical
+    condition:
+      event_type: network_connection
+      dst_ip_in_iocs: true
+  - id: repeated_vpn_failures
+    title: Repeated VPN failures
+    description: Same IP triggered repeated auth failures
+    severity: medium
+    condition:
+      source: vpn
+      event_type: authentication_failure
+    threshold:
+      field: src_ip
+      count: 5
+      within_seconds: 300

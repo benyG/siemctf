@@ -1,0 +1,9 @@
+iocs:
+  - type: ip
+    value: 45.77.12.99
+    threat_name: Fake beacon C2
+    confidence: high
+  - type: domain
+    value: update-microsoft-checkin.example
+    threat_name: Fake phishing infra
+    confidence: medium

@@ -1,0 +1,7 @@
+flags:
+  - flag: CTF{encoded_powershell_detected}
+    location_hint: Find the suspicious PowerShell execution
+    trigger_value: powershell -enc
+  - flag: CTF{c2_45_77_12_99}
+    location_hint: Find the outbound malicious IOC
+    trigger_value: 45.77.12.99

@@ -1,0 +1,3 @@
+timestamp=2026-03-01T09:12:20Z source=firewall host=HR-LT-17 user=jdupont src_ip=10.0.0.5 dst_ip=45.77.12.99 dst_port=443 action=allow message="Outbound TLS connection to update-microsoft-checkin.example"
+timestamp=2026-03-01T09:13:10Z source=firewall host=HR-LT-17 user=jdupont src_ip=10.0.0.5 dst_ip=8.8.8.8 dst_port=53 action=allow message="Normal DNS traffic"
+timestamp=2026-03-01T09:14:40Z source=firewall host=WEB-01 user=www-data src_ip=10.0.0.30 dst_ip=1.1.1.1 dst_port=443 action=allow message="Routine outbound traffic"
