@@ -23,7 +23,7 @@ def require_admin_api_key(x_api_key: str | None = Header(default=None, alias="X-
         raise HTTPException(status_code=401, detail="Invalid or missing API key")
 
 
-router = APIRouter(prefix="/api/admin", tags=["admin"], dependencies=[Depends(require_admin_api_key)])
+router = APIRouter(prefix="/api/v1/admin", tags=["admin"], dependencies=[Depends(require_admin_api_key)])
 
 
 @router.get("/scenarios")
