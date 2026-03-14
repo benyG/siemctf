@@ -49,7 +49,7 @@ Au démarrage:
 
 ## Clé API admin (variable d'environnement)
 
-Les routes `/api/admin/*` supportent une protection par clé API:
+Les routes `/api/v1/admin/*` supportent une protection par clé API:
 
 - variable: `API_KEY`
 - header HTTP attendu: `X-API-Key: <votre_cle>`
@@ -70,12 +70,12 @@ environment:
 
 Toutes ces routes utilisent `X-API-Key` si `API_KEY` est configurée.
 
-- `GET /api/admin/scenarios` liste les scénarios importés
-- `GET /api/admin/scenarios/sources` liste les dossiers détectés dans `SCENARIO_ROOT`
-- `POST /api/admin/scenarios/import-sample/{scenario_id}` importe un scénario depuis `SCENARIO_ROOT/{scenario_id}`
-- `POST /api/admin/scenarios/import-zip` importe un ZIP de scénario
-- `POST /api/admin/scenarios/{scenario_id}/activate` active un scénario
-- `GET /api/admin/scenarios/{scenario_id}/validation` retourne les stats d'ingestion
+- `GET /api/v1/admin/scenarios` liste les scénarios importés
+- `GET /api/v1/admin/scenarios/sources` liste les dossiers détectés dans `SCENARIO_ROOT`
+- `POST /api/v1/admin/scenarios/import-sample/{scenario_id}` importe un scénario depuis `SCENARIO_ROOT/{scenario_id}`
+- `POST /api/v1/admin/scenarios/import-zip` importe un ZIP de scénario
+- `POST /api/v1/admin/scenarios/{scenario_id}/activate` active un scénario
+- `GET /api/v1/admin/scenarios/{scenario_id}/validation` retourne les stats d'ingestion
 
 ### Exemples `curl`
 
@@ -83,14 +83,14 @@ Lister les sources disponibles:
 
 ```bash
 curl -H "X-API-Key: change-me" \
-  http://localhost:8000/api/admin/scenarios/sources
+  http://localhost:8000/api/v1/admin/scenarios/sources
 ```
 
 Importer un scénario monté dans `/scenarios`:
 
 ```bash
 curl -X POST -H "X-API-Key: change-me" \
-  http://localhost:8000/api/admin/scenarios/import-sample/phishing_chain
+  http://localhost:8000/api/v1/admin/scenarios/import-sample/phishing_chain
 ```
 
 Importer un ZIP:
@@ -98,14 +98,14 @@ Importer un ZIP:
 ```bash
 curl -X POST -H "X-API-Key: change-me" \
   -F "file=@./my_scenario.zip" \
-  http://localhost:8000/api/admin/scenarios/import-zip
+  http://localhost:8000/api/v1/admin/scenarios/import-zip
 ```
 
 Activer un scénario:
 
 ```bash
 curl -X POST -H "X-API-Key: change-me" \
-  http://localhost:8000/api/admin/scenarios/phishing_chain/activate
+  http://localhost:8000/api/v1/admin/scenarios/phishing_chain/activate
 ```
 
 
@@ -127,12 +127,12 @@ Documentation OpenAPI interactive:
 Exemple:
 
 ```bash
-curl -H "X-API-Key: change-me" http://localhost:8000/api/admin/scenarios
+curl -H "X-API-Key: change-me" http://localhost:8000/api/v1/admin/scenarios
 ```
 
-### Endpoints data (`/api/*`)
+### Endpoints data (`/api/v1/*`)
 
-#### `GET /api/dashboard`
+#### `GET /api/v1/dashboard`
 
 Retourne les metriques agregees du scenario actif.
 
@@ -144,7 +144,7 @@ Comportement special:
 
 - S'il n'y a pas de scenario actif: `{ "message": "No active scenario" }`.
 
-#### `GET /api/search`
+#### `GET /api/v1/search`
 
 Recherche des evenements dans le scenario actif avec une pseudo-syntaxe KQL/SPL.
 
@@ -160,10 +160,10 @@ Reponse:
 Exemple:
 
 ```bash
-curl "http://localhost:8000/api/search?q=src_ip:10.0.0.5%20AND%20event_type:process"
+curl "http://localhost:8000/api/v1/search?q=src_ip:10.0.0.5%20AND%20event_type:process"
 ```
 
-#### `GET /api/alerts`
+#### `GET /api/v1/alerts`
 
 Retourne les alertes du scenario actif.
 
@@ -172,7 +172,7 @@ Reponse:
 - Liste d'objets avec: `id`, `rule_id`, `title`, `severity`, `status`, `event_id`.
 - Si aucun scenario actif: `[]`.
 
-#### `GET /api/assets`
+#### `GET /api/v1/assets`
 
 Retourne les assets du scenario actif.
 
@@ -181,11 +181,11 @@ Reponse:
 - Liste d'objets avec: `hostname`, `ip`, `os`, `owner`, `criticality`, `department`.
 - Si aucun scenario actif: `[]`.
 
-### Endpoints admin (`/api/admin/*`)
+### Endpoints admin (`/api/v1/admin/*`)
 
 Toutes ces routes sont protegees par `X-API-Key` si `API_KEY` est configuree.
 
-#### `GET /api/admin/scenarios`
+#### `GET /api/v1/admin/scenarios`
 
 Liste les scenarios presents en base.
 
@@ -193,7 +193,7 @@ Champs retournes:
 
 - `id`, `name`, `description`, `difficulty`, `version`, `is_active`.
 
-#### `GET /api/admin/scenarios/sources`
+#### `GET /api/v1/admin/scenarios/sources`
 
 Liste les dossiers de scenarios detectes sous `SCENARIO_ROOT`.
 
@@ -202,7 +202,7 @@ Reponse:
 - `root`: chemin racine de scan.
 - `sources`: liste avec `source_id`, `manifest`, `logs` (nombre de fichiers de logs).
 
-#### `POST /api/admin/scenarios/import-sample/{scenario_id}`
+#### `POST /api/v1/admin/scenarios/import-sample/{scenario_id}`
 
 Importe un scenario depuis `SCENARIO_ROOT/{scenario_id}`.
 
@@ -211,7 +211,7 @@ Erreurs possibles:
 - `400`: id invalide.
 - `404`: source introuvable.
 
-#### `POST /api/admin/scenarios/import-zip`
+#### `POST /api/v1/admin/scenarios/import-zip`
 
 Importe un scenario depuis un fichier ZIP (multipart/form-data).
 
@@ -220,10 +220,10 @@ Exemple:
 ```bash
 curl -X POST -H "X-API-Key: change-me" \
   -F "file=@./my_scenario.zip" \
-  http://localhost:8000/api/admin/scenarios/import-zip
+  http://localhost:8000/api/v1/admin/scenarios/import-zip
 ```
 
-#### `POST /api/admin/scenarios/{scenario_id}/activate`
+#### `POST /api/v1/admin/scenarios/{scenario_id}/activate`
 
 Active un scenario existant.
 
@@ -240,7 +240,7 @@ Erreur possible:
 
 - `404`: scenario non trouve.
 
-#### `GET /api/admin/scenarios/{scenario_id}/validation`
+#### `GET /api/v1/admin/scenarios/{scenario_id}/validation`
 
 Retourne le dernier resume d'ingestion du scenario.
 
@@ -282,7 +282,7 @@ Activer le sélecteur en UI:
 
 ## API data utiles
 
-- `GET /api/dashboard`
-- `GET /api/search?q=...`
-- `GET /api/alerts`
-- `GET /api/assets`
+- `GET /api/v1/dashboard`
+- `GET /api/v1/search?q=...`
+- `GET /api/v1/alerts`
+- `GET /api/v1/assets`

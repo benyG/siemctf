@@ -6,7 +6,7 @@ from app.models import Event, Alert, Asset
 from app.services.scenarios import get_active_scenario
 from app.services.search import build_condition, parse_query_string
 
-router = APIRouter(prefix="/api", tags=["data"])
+router = APIRouter(prefix="/api/v1", tags=["data"])
 
 @router.get("/dashboard")
 def dashboard_summary(q: str = "", db: Session = Depends(get_db)):
